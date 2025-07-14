@@ -1,0 +1,2158 @@
+<!DOCTYPE html>
+<html lang="en-US" dir="ltr" class="navbar-vertical-collapsed">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Document Title -->
+    <title>EcoWatch Dashboard - Environmental Monitoring System</title>
+
+    <!-- Favicons -->
+    <meta name="theme-color" content="#ffffff">
+
+    <!-- Stylesheets -->
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,500,600,700%7cPoppins:300,400,500,600,700,800,900&amp;display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@500&display=swap" rel="stylesheet">
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <!-- Date Range Picker CSS -->
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+
+    <style>
+        :root {
+            --primary-color: #2c7be5;
+            --secondary-color: #39bbf7;
+            --success-color: #00d27a;
+            --warning-color: #f5803e;
+            --danger-color: #e63757;
+            --info-color: #27bcfd;
+            --light-color: #f8f9fa;
+            --dark-color: #344050;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(286deg, #eaeaea 0%, #ffffff 50%, #ffffff 100%);
+            background-attachment: fixed;
+            position: relative;
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                radial-gradient(circle at 20% 20%, rgba(44, 123, 229, 0.05) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(57, 187, 247, 0.05) 0%, transparent 50%),
+                radial-gradient(circle at 40% 70%, rgba(0, 210, 122, 0.03) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: -1;
+        }
+        .card {
+            -webkit-box-shadow: var(--falcon-box-shadow);
+            box-shadow: var(--falcon-box-shadow);
+        }
+
+        .row {
+            --falcon-gutter-x: 2rem;
+            --falcon-gutter-y: 0;
+            display: -webkit-box;
+            display: -ms-flexbox;
+            display: flex;
+            -ms-flex-wrap: wrap;
+            flex-wrap: wrap;
+            /* margin-top: calc(var(--falcon-gutter-y) * -1); */
+            margin-right: calc(var(--falcon-gutter-x) * -0.5);
+            margin-left: calc(var(--falcon-gutter-x) * -0.5);
+        }
+
+        .content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0;
+            position: relative;
+            z-index: 1;
+        }
+
+        .navbar-brand img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+        }
+
+        .load-button .lds-dual-ring {
+            display: inline-block;
+            width: 26px;
+            height: 17px;
+            padding-left: 0%;
+        }
+
+        .load-button .lds-dual-ring:after {
+            content: "";
+            display: block;
+            width: 5px;
+            height: 5px;
+            margin: 6px;
+            border-radius: 50%;
+            border: 6px solid #202020;
+            border-color: #202020 transparent #202020 transparent;
+            animation: lds-dual-ring 1.2s linear infinite;
+        }
+
+        .lds-dual-ring {
+            display: inline-block;
+            width: 80px;
+            height: 80px;
+            padding-left: 1%;
+        }
+
+        .lds-dual-ring:after {
+            content: "";
+            display: block;
+            width: 35px;
+            height: 35px;
+            margin: 8px;
+            border-radius: 50%;
+            border: 6px solid #39bbf7;
+            border-color: #39bbf7 transparent #39bbf7 transparent;
+            animation: lds-dual-ring 1.2s linear infinite;
+        }
+
+        @keyframes lds-dual-ring {
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        #summaryRow .adjust {
+            display: flex;
+            flex-direction: column;
+            align-self: stretch;
+            margin-bottom: 1rem;
+        }
+
+        .summary-border {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+            backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.95);
+            margin-bottom: 1rem;
+        }
+
+        .summmaryStats {
+            text-align: center;
+            padding: 1.2rem;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .summmaryStats h1 {
+            font-size: 60px;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+
+        #summaryRow {
+            display: flex;
+            justify-content: space-between;
+            font-family: "Poppins";
+        }
+
+        #summaryRow .table tr th:not(:first-child),
+        #summaryRow .table tr td:not(:first-child) {
+            text-align: right;
+            border-bottom: 1px solid #dee2e6;
+        }
+
+        #summaryRow .table tr th:first-child {
+            border-right: 1px solid #dee2e6;
+            border-bottom: 1px solid #dee2e6;
+        }
+
+        #summaryRow>* {
+            padding-right: calc(var(--falcon-gutter-x) * .5) !important;
+            padding-left: calc(var(--falcon-gutter-x) * .5) !important;
+            margin-bottom: 1.5rem;
+        }
+
+        .chartContainer {
+            margin-bottom: 1.5rem;
+        }
+
+        .chartContainer h6 {
+            margin-bottom: 1rem;
+            font-weight: 500;
+            color: #495057;
+        }
+
+        .town-button {
+            font-size: small;
+            margin: 10px;
+            border-radius: 10px !important;
+        }
+
+        .year-button {
+            font-size: smaller;
+            margin: 10px;
+            border-radius: 10px !important;
+        }
+
+        .card {
+            border: none;
+            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.95);
+        }
+
+        .bg-holder {
+            position: absolute;
+            width: 100%;
+            min-height: 100%;
+            top: 0;
+            left: 0;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            z-index: -1;
+        }
+
+        .nav-tabs .nav-link {
+            border-radius: 8px 8px 0 0;
+            border: none;
+            padding: 0.75rem 1.5rem;
+        }
+
+        .nav-tabs .nav-link.active {
+            background-color: white;
+            border-bottom: 3px solid var(--primary-color);
+        }
+
+        .avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+
+        .notification-indicator {
+            position: relative;
+        }
+
+        .notification-indicator-number {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: var(--danger-color);
+            color: white;
+            border-radius: 50%;
+            width: 18px;
+            height: 18px;
+            font-size: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .theme-control-toggle {
+            cursor: pointer;
+        }
+
+        .chartContainer {
+            position: relative;
+            backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.95) !important;
+            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+        }
+
+        .highcharts-figure {
+            margin: 0;
+        }
+
+        .tableFixHead {
+            max-height: 400px;
+        }
+
+        /* Responsive design */
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+            
+            body::before {
+                background-size: 150% 150%;
+            }
+            
+            .summmaryStats h1 {
+                font-size: 40px;
+            }
+        }
+
+        table tr th {
+            margin-left: 5%;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Main Content -->
+    <main class="main" id="top">
+        <div class="container-fluid" data-layout="container">
+            <!-- Main Content Area -->
+            <div class="content">
+                <!-- Tab Navigation -->
+                <ul class="nav nav-tabs" id="myTab" role="tablist" style="font-family: 'Poppins';">
+                    <li class="nav-item">
+                        <a class="nav-link active bg-white px-4" style="border-radius: 8px 8px 0 0;" id="environmental-tab" data-bs-toggle="tab" href="#environmental" role="tab">Environmental Dashboard</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link px-4" style="border-radius: 8px 8px 0 0;" id="clinical-tab" data-bs-toggle="tab" href="#clinical" role="tab">Water Quality Dashboard</a>
+                    </li>
+                </ul>
+
+                <div class="tab-content" id="myTabContent">
+                    <!-- Environmental Dashboard Tab -->
+                    <div class="tab-pane fade show active" id="environmental" role="tabpanel">
+                        <h4 class="mt-4">Environmental Surveillance System</h4>
+                        <hr class="navbar-vertical-divider">
+
+                <!-- Summary Cards -->
+                <div class="row" id="summaryRow">
+                    <div class="col-md adjust">
+                        <div class="card summary-border bg-white">
+                            <div class="summmaryStats">
+                                <h6>Samples Collected</h6>
+                                <h1 id="today">12</h1>
+                                <p>Today</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md adjust">
+                        <div class="card summary-border bg-white">
+                            <div class="summmaryStats">
+                                <h6>Samples Collected</h6>
+                                <h1 id="thisWeek">87</h1>
+                                <p>This Week</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md adjust">
+                        <div class="card summary-border bg-white">
+                            <div class="summmaryStats">
+                                <h6>Total</h6>
+                                <h1 id="totalTac">2,456</h1>
+                                <h6 class="text-muted">Environmental Samples</h6>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-5 adjust">
+                        <div class="card table-responsive bg-white p-3" style="border-radius: 20px; font-size:small">
+                            <table class="table table-hover table-sm mb-0" style="z-index: 2;">
+                                <thead class="thead-light bg-dark text-light">
+                                    <tr>
+                                        <th scope="col" style="border-radius: 8px 0 0 8px;">Region</th>
+                                        <th scope="col">Samples This Week</th>
+                                        <th scope="col" style="border-radius: 0 8px 8px 0;">Today</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="townWeekT-samplesTable">
+                                    <tr><th>North District</th><td>28</td><td>4</td></tr>
+                                    <tr><th>South District</th><td>32</td><td>5</td></tr>
+                                    <tr><th>East District</th><td>27</td><td>3</td></tr>
+                                    <tr><th style="border-top: 2px solid #dee2e6;"><strong>Total</strong></th><td style="border-top: 2px solid #dee2e6;"><strong>87</strong></td><td style="border-top: 2px solid #dee2e6;"><strong>12</strong></td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Filters -->
+                <!-- <div class="row" id="summaryRow">
+                    <div class="col-lg-4 adjust">
+                        <div class="chartContainer bg-white p-3 card" style="border-radius: 20px;">
+                            <h4>Date Range:</h4>
+                            <div id="reportrange" style="background: #fff; cursor: pointer; border-radius: 12px; padding: 10px 10px; border: 1px solid #ccc; width: 100%">
+                                <i class="fa fa-calendar"></i>&nbsp;
+                                <span></span> <i class="fa fa-caret-down"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 adjust">
+                        <div class="chartContainer bg-white p-3 card" style="border-radius: 20px;">
+                            <h5>Regions:</h5>
+                            <div class="btn-group" role="group">
+                                <input type="checkbox" class="btn-check" id="btn1" autocomplete="off" name="town[]" value="North District" checked>
+                                <label class="btn btn-outline-primary town-button" for="btn1">North District</label>
+
+                                <input type="checkbox" class="btn-check" id="btn2" autocomplete="off" name="town[]" value="South District" checked>
+                                <label class="btn btn-outline-primary town-button" for="btn2">South District</label>
+
+                                <input type="checkbox" class="btn-check" id="btn3" autocomplete="off" name="town[]" value="East District" checked>
+                                <label class="btn btn-outline-primary town-button" for="btn3">East District</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-3 adjust">
+                        <div class="chartContainer bg-white p-3 card" style="border-radius: 20px;">
+                            <h5>Years:</h5>
+                            <div class="btn-group flex-wrap" role="group">
+                                <input type="checkbox" class="btn-check" id="btnY1" autocomplete="off" name="year[]" value="2022">
+                                <label class="btn btn-outline-primary year-button" for="btnY1">2022</label>
+
+                                <input type="checkbox" class="btn-check" id="btnY2" autocomplete="off" name="year[]" value="2023" checked>
+                                <label class="btn btn-outline-primary year-button" for="btnY2">2023</label>
+
+                                <input type="checkbox" class="btn-check" id="btnY3" autocomplete="off" name="year[]" value="2024" checked>
+                                <label class="btn btn-outline-primary year-button" for="btnY3">2024</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-1 adjust">
+                        <div class="chartContainer bg-white p-2 card" style="border-radius: 20px;">
+                            <h6>Apply Filter:</h6>
+                            <button class="btn btn-sm btn-success m-1 load-button" id="applyBtn" style="border-radius: 10px;" onclick="getFilteredData()">Apply</button>
+                            <button class="btn btn-sm btn-info m-1 load-button" id="resetBtn" style="border-radius: 10px;" onclick="reset()">Reset</button>
+                        </div>
+                    </div>
+                </div> -->
+
+                <!-- Line Chart -->
+                <div class="row" id="summaryRow">
+                    <div class="col-12 adjust">
+                        <div class="chartContainer bg-white p-2 card" style="border-radius: 20px;">
+                            <figure class="highcharts-figure">
+                                <div id="container"></div>
+                            </figure>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Stack Bar Chart -->
+                <div class="row" id="summaryRow">
+                    <div class="col-12 adjust">
+                        <div class="card summmaryStats bg-white p-2" style="border-radius: 20px;">
+                            <figure class="highcharts-figure">
+                                <div id="stackbarChart-CultureTac"></div>
+                            </figure>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tables and Charts Row -->
+                <div class="row" id="summaryRow">
+                    <!-- Region-Wise Summary Table -->
+                    <div class="col-xl-7 adjust">
+                        <div class="card table-responsive bg-white p-3" style="border-radius: 20px; font-size: .9em !important;">
+                            <h5>Area-Wise Summary of Environmental Samples Collected</h5>
+                            <div class="tableFixHead" style="z-index: 2; overflow-y:auto">
+                                <table class="table table-hover table-sm mb-0" style="font-size:small">
+                                    <thead class="thead-light bg-dark text-light">
+                                        <tr>
+                                            <th scope="col" style="border-radius: 8px 0 0 8px;">Monitoring Areas</th>
+                                            <th scope="col">Water Samples</th>
+                                            <th scope="col">Air Quality Samples</th>
+                                            <th scope="col" style="border-radius: 0 8px 8px 0;">Soil Samples</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="UC-WiseTable">
+                                        <tr><th>Industrial Zone A</th><td>45</td><td>32</td><td>28</td></tr>
+                                        <tr><th>Residential Area B</th><td>38</td><td>29</td><td>22</td></tr>
+                                        <tr><th>Commercial District C</th><td>52</td><td>41</td><td>35</td></tr>
+                                        <tr><th>Parks & Recreation</th><td>31</td><td>25</td><td>18</td></tr>
+                                        <tr><th>Waterfront Zone</th><td>67</td><td>33</td><td>29</td></tr>
+                                        <tr style="border-top: 2px solid #dee2e6;"><th><strong>Total</strong></th><td><strong>233</strong></td><td><strong>160</strong></td><td><strong>132</strong></td></tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Sites Doughnut Chart -->
+                    <div class="col-xl-5 adjust">
+                        <div class="card bg-white p-3" style="border-radius: 20px; height:auto; width:100%">
+                            <figure class="highcharts-figure">
+                                <div id="sitesDoughnut"></div>
+                            </figure>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- District Distribution Bar Chart -->
+                <div class="row" id="summaryRow">
+                    <div class="col-xl-12 adjust">
+                        <div class="card bg-white p-2" style="border-radius: 20px;">
+                            <figure class="highcharts-figure">
+                                <div id="ucBarChartDistribution"></div>
+                            </figure>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Environmental Analysis Chart -->
+                <div class="row" id="summaryRow">
+                    <div class="col-xl-12 adjust">
+                        <h2 class="mt-2" style="font-weight: bold;">Environmental Analysis Results</h2>
+                        <div class="card bg-white p-2" style="border-radius: 20px;">
+                            <div class="summmaryStats">
+                                <figure class="highcharts-figure">
+                                    <div style="text-align:end; font-weight:bold" class="px-4" id="numberCounts">N = 1,247</div>
+                                    <div id="buttonContainer"></div>
+                                    <div id="trackers"></div>
+                                </figure>
+                                <!-- Quality Trend Chart - Initially Hidden -->
+                                <div id="trendAnalysisSection" style="display: none;">
+                                    <hr class="navbar-vertical-divider">
+                                    <figure class="highcharts-figure">
+                                        <div class="d-flex justify-content-between align-items-center mb-3">
+                                            <h5 class="mb-0">Trend Analysis</h5>
+                                            <button id="resetButton" class="btn btn-outline-primary" style="border-radius: 10px;">
+                                                Clear All Trends
+                                            </button>
+                                        </div>
+                                        <div id="positivityTrend" style="min-height: 400px;"></div>
+                                    </figure>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                    </div> <!-- End Environmental Tab -->
+
+                    <!-- Water Quality Dashboard Tab -->
+                    <div class="tab-pane fade" id="clinical" role="tabpanel">
+                        <h4 class="mt-4">Water Quality Surveillance</h4>
+                        <hr class="navbar-vertical-divider">
+
+                        <h2 class="mt-2">Water Quality Testing</h2>
+                        <div class="row" id="summaryRow">
+                            <div class="col-xl-6 adjust">
+                                <div class="card table-responsive bg-white p-3" style="border-radius: 20px;">
+                                    <h5>Day & Week Wise Testing Summary</h5>
+                                    <hr class="navbar-vertical-divider pt-0 mt-0">
+                                    <table class="table table-hover table-sm mb-0" style="z-index: 2; font-size: small;">
+                                        <thead class="thead-light bg-dark text-light">
+                                            <tr>
+                                                <th scope="col" style="border-radius: 8px 0 0 8px;">Testing Facility</th>
+                                                <th scope="col">Today</th>
+                                                <th scope="col" style="border-radius: 0 8px 8px 0;">This Week</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="waterTodayWeek-testingTable">
+                                            <tr><th>Lab Station A</th><td>3</td><td>18</td></tr>
+                                            <tr><th>Lab Station B</th><td>2</td><td>21</td></tr>
+                                            <tr><th>Field Lab C</th><td>3</td><td>13</td></tr>
+                                            <tr style="border-top: 2px solid #dee2e6;"><th><strong>Total</strong></th><td style="border-top: 2px solid #dee2e6;"><strong>8</strong></td><td style="border-top: 2px solid #dee2e6;"><strong>52</strong></td></tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <div class="col-xl-6 adjust">
+                                <div class="card table-responsive bg-white p-3" style="border-radius: 20px;">
+                                    <h5>Total Tests by Facility</h5>
+                                    <hr class="navbar-vertical-divider pt-0 mt-0">
+                                    <table class="table table-hover table-sm mb-0" style="z-index: 2; font-size: small;">
+                                        <thead class="thead-light bg-dark text-light">
+                                            <tr>
+                                                <th scope="col" style="border-radius: 8px 0 0 8px;">Testing Facility</th>
+                                                <th scope="col" style="border-radius: 0 8px 8px 0;">Total No. of Tests</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="waterCounts-testingTable">
+                                            <tr><th>Municipal Water Plant A</th><td>309</td></tr>
+                                            <tr><th>Treatment Facility B</th><td>229</td></tr>
+                                            <tr><th>Distribution Point C</th><td>433</td></tr>
+                                            <tr><th>Reservoir Station D</th><td>263</td></tr>
+                                            <!-- <tr><th>Field Testing Unit E</th><td>170</td></tr> -->
+                                            <tr style="border-top: 2px solid #dee2e6;"><th><strong>Total</strong></th><td style="border-top: 2px solid #dee2e6;"><strong>1,404</strong></td></tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row" id="summaryRow">
+                            <div class="col-lg-3 adjust">
+                                <div class="card summmaryStats bg-white">
+                                    <h6 style="text-align: left;">Testing Status</h6>
+                                    <figure class="highcharts-figure" style="margin-bottom: 0;">
+                                        <div id="waterTestingStatusBar" style="height: 17rem;">
+                                            <div class='pt-4 text-center'>
+                                                <p>Loading...</p>
+                                                <div class="lds-dual-ring"></div>
+                                            </div>
+                                        </div>
+                                    </figure>
+                                </div>
+                            </div>
+                            <div class="col-xl-3 adjust">
+                                <div class="card summmaryStats bg-white">
+                                    <h6 style="text-align: left;">Summary of Water Quality Tests</h6>
+                                    <figure class="highcharts-figure" style="margin-bottom: 0;">
+                                        <div id="waterQualityBar" style="height: 15rem;">
+                                            <div class='pt-4 text-center'>
+                                                <p>Loading...</p>
+                                                <div class="lds-dual-ring"></div>
+                                            </div>
+                                        </div>
+                                    </figure>
+                                </div>
+                            </div>
+                            <div class="col-lg-3 adjust">
+                                <div class="card summmaryStats bg-white">
+                                    <h6 class="pt-3" style="text-align: left; top:0; position:absolute;">Number of Tests by Facility and Type</h6>
+                                    <figure class="highcharts-figure" style="margin-bottom: 0;">
+                                        <div id="waterTestTypeBar" style="height: 16rem;">
+                                            <div class='pt-4 text-center'>
+                                                <p>Loading...</p>
+                                                <div class="lds-dual-ring"></div>
+                                            </div>
+                                        </div>
+                                    </figure>
+                                </div>
+                            </div>
+                            <div class="col-lg-3 adjust">
+                                <div class="card summmaryStats bg-white">
+                                    <h6 style="text-align: left;">Water Samples from Testing Sites</h6>
+                                    <figure class="highcharts-figure" style="margin-bottom: 0;">
+                                        <div id="waterSampleBar" style="height: 17rem;">
+                                            <div class='pt-4 text-center'>
+                                                <p>Loading...</p>
+                                                <div class="lds-dual-ring"></div>
+                                            </div>
+                                        </div>
+                                    </figure>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Line Chart -->
+                        <div class="row" id="summaryRow">
+                            <div class="col-12 adjust">
+                                <div class="chartContainer bg-white p-3 card" style="border-radius: 20px; margin-bottom: 1rem;">
+                                    <h6 class="p-2" style="text-align: left;">Month-Wise Water Quality Testing Summary</h6>
+                                    <figure class="highcharts-figure">
+                                        <div id="waterQualityTrendContainer">
+                                            <div class='pt-4 text-center'>
+                                                <p>Loading...</p>
+                                                <div class="lds-dual-ring"></div>
+                                            </div>
+                                        </div>
+                                    </figure>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row" id="summaryRow">
+                            <div class="col-xl-4 adjust">
+                                <div class="card summmaryStats bg-white">
+                                    <h6 style="text-align: left;">pH Analysis by Testing Labs</h6>
+                                    <figure class="highcharts-figure" style="margin-bottom: 0;">
+                                        <div id="waterPHAnalysisBar" style="height: 15rem;">
+                                            <div class='pt-4 text-center'>
+                                                <p>Loading...</p>
+                                                <div class="lds-dual-ring"></div>
+                                            </div>
+                                        </div>
+                                    </figure>
+                                </div>
+                            </div>
+                            <div class="col-lg-4 adjust">
+                                <div class="card summmaryStats bg-white">
+                                    <h6 style="text-align: left;">Chemical Tests by Region</h6>
+                                    <figure class="highcharts-figure" style="margin-bottom: 0;">
+                                        <div id="waterChemicalTestsBar" style="height: 17rem;">
+                                            <div class='pt-4 text-center'>
+                                                <p>Loading...</p>
+                                                <div class="lds-dual-ring"></div>
+                                            </div>
+                                        </div>
+                                    </figure>
+                                </div>
+                            </div>
+                            <div class="col-lg-4 adjust">
+                                <div class="card summmaryStats bg-white">
+                                    <h6 style="text-align: left;">Bacterial Tests from Labs</h6>
+                                    <figure class="highcharts-figure" style="margin-bottom: 0;">
+                                        <div id="waterBacterialTestsBar" style="height: 17rem;">
+                                            <div class='pt-4 text-center'>
+                                                <p>Loading...</p>
+                                                <div class="lds-dual-ring"></div>
+                                            </div>
+                                        </div>
+                                    </figure>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Line Chart -->
+                        <div class="row" id="summaryRow">
+                            <div class="col-12 adjust">
+                                <div class="chartContainer bg-white p-3 card" style="border-radius: 20px; margin-bottom: 1rem;">
+                                    <h6 class="p-2" style="text-align: left;">Month-Wise Water Quality Tests from Clinical Labs</h6>
+                                    <figure class="highcharts-figure">
+                                        <div id="waterLabTestTrend">
+                                            <div class='pt-4 text-center'>
+                                                <p>Loading...</p>
+                                                <div class="lds-dual-ring"></div>
+                                            </div>
+                                        </div>
+                                    </figure>
+                                </div>
+                            </div>
+                        </div>
+
+                        <h2 class="mt-4 mb-3">Cumulative Trend for Water Quality</h2>
+                        <!-- Line Chart -->
+                        <div class="row" id="summaryRow">
+                            <div class="col-12 adjust">
+                                <div class="chartContainer bg-white p-3 card" style="border-radius: 20px; margin-bottom: 1rem;">
+                                    <h6 class="p-2" style="text-align: left;">Cumulative Month-Wise Water Quality Tests By District</h6>
+                                    <figure class="highcharts-figure">
+                                        <div id="waterCumulativeTrendByDistrict">
+                                            <div class='pt-4 text-center'>
+                                                <p>Loading...</p>
+                                                <div class="lds-dual-ring"></div>
+                                            </div>
+                                        </div>
+                                    </figure>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Contamination Analysis -->
+                        <h2 class="mt-4 mb-3">Contamination Analysis</h2>
+                        <!-- Line Chart -->
+                        <div class="row" id="summaryRow">
+                            <div class="col-12 adjust">
+                                <div class="chartContainer bg-white p-3 card" style="border-radius: 20px; margin-bottom: 1rem;">
+                                    <h6 class="p-2" style="text-align: left;">Month-Wise Contamination Detection</h6>
+                                    <figure class="highcharts-figure">
+                                        <div id="contaminationTrendData">
+                                            <div class='pt-4 text-center'>
+                                                <p>Loading...</p>
+                                                <div class="lds-dual-ring"></div>
+                                            </div>
+                                        </div>
+                                    </figure>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- pH Monitoring -->
+                        <h2 class="mt-4 mb-3">pH Monitoring</h2>
+                        <!-- Line Chart -->
+                        <div class="row" id="summaryRow">
+                            <div class="col-12 adjust">
+                                <div class="chartContainer bg-white p-3 card" style="border-radius: 20px; margin-bottom: 1rem;">
+                                    <h6 class="p-2" style="text-align: left;">Month-Wise pH Level Monitoring in Districts</h6>
+                                    <figure class="highcharts-figure">
+                                        <div id="phMonitoringData">
+                                            <div class='pt-4 text-center'>
+                                                <p>Loading...</p>
+                                                <div class="lds-dual-ring"></div>
+                                            </div>
+                                        </div>
+                                    </figure>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Water Quality Sample Results -->
+                        <h2 class="mt-4 mb-3">Water Quality Sample Results</h2>
+                        <hr class="navbar-vertical-divider">
+                        <div class="row" id="summaryRow">
+                            <div class="col-xl-6 adjust">
+                                <div class="card summmaryStats bg-white">
+                                    <h6 style="text-align: left;">Sample Trend</h6>
+                                    <figure class="highcharts-figure" style="margin-bottom: 0;">
+                                        <div id="waterSampleTrend">
+                                            <div class='pt-4 text-center'>
+                                                <p>Loading...</p>
+                                                <div class="lds-dual-ring"></div>
+                                            </div>
+                                        </div>
+                                    </figure>
+                                </div>
+                            </div>
+                            <div class="col-xl-6 adjust">
+                                <div class="card summmaryStats bg-white">
+                                    <h6 style="text-align: left;">Water Quality Results for Metropolitan</h6>
+                                    <figure class="highcharts-figure" style="margin-bottom: 0;">
+                                        <div class="text-muted" style="font-size: small;">
+                                            <div style="text-align:end;" class="px-4" id="totalWaterTests">Total N : 1,847</div>
+                                            <div style="text-align:end;" class="px-4" id="waterTestsPass">Passed : 1,598</div>
+                                            <div style="text-align:end;" class="px-4" id="waterTestsFail">Failed : 249</div>
+                                        </div>
+                                        <div id="waterQualityResults">
+                                            <div class='pt-4 text-center'>
+                                                <p>Loading...</p>
+                                                <div class="lds-dual-ring"></div>
+                                            </div>
+                                        </div>
+                                    </figure>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row" id="summaryRow">
+                            <div class="col-md-6 adjust">
+                                <div class="card summmaryStats bg-white">
+                                    <h6 style="text-align: left;">By District</h6>
+                                    <figure class="highcharts-figure" style="margin-bottom: 0;">
+                                        <div id="waterTestsByDistrict" style="height: 12rem;">
+                                            <div class='pt-4 text-center'>
+                                                <p>Loading...</p>
+                                                <div class="lds-dual-ring"></div>
+                                            </div>
+                                        </div>
+                                    </figure>
+                                </div>
+                            </div>
+                            <div class="col-md-6 adjust">
+                                <div class="card summmaryStats bg-white">
+                                    <h6 style="text-align: left;">By Zone</h6>
+                                    <figure class="highcharts-figure" style="margin-bottom: 0;">
+                                        <div id="waterTestsByZone" style="height: 12rem;">
+                                            <div class='pt-4 text-center'>
+                                                <p>Loading...</p>
+                                                <div class="lds-dual-ring"></div>
+                                            </div>
+                                        </div>
+                                    </figure>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row" id="summaryRow">
+                            <div class="col-md-6 adjust">
+                                <div class="card summmaryStats bg-white">
+                                    <h6 style="text-align: left;">By Source Type</h6>
+                                    <figure class="highcharts-figure" style="margin-bottom: 0;">
+                                        <div id="waterTestsBySource" style="height: 12rem;">
+                                            <div class='pt-4 text-center'>
+                                                <p>Loading...</p>
+                                                <div class="lds-dual-ring"></div>
+                                            </div>
+                                        </div>
+                                    </figure>
+                                </div>
+                            </div>
+                            <div class="col-md-6 adjust">
+                                <div class="card summmaryStats bg-white">
+                                    <h6 style="text-align: left;">By Test Category</h6>
+                                    <figure class="highcharts-figure" style="margin-bottom: 0;">
+                                        <div id="waterTestsByCategory">
+                                            <div class='pt-4 text-center'>
+                                                <p>Loading...</p>
+                                                <div class="lds-dual-ring"></div>
+                                            </div>
+                                        </div>
+                                    </figure>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Line Chart -->
+                        <div class="row" id="summaryRow">
+                            <div class="col-12 adjust">
+                                <div class="chartContainer bg-white p-2 card" style="border-radius: 20px;">
+                                    <h6 class="p-2" style="text-align: left;">Month-Wise Chemical Analysis Summary</h6>
+                                    <figure class="highcharts-figure">
+                                        <div id="chemicalAnalysisContainer">
+                                            <div class='pt-4 text-center'>
+                                                <p>Loading...</p>
+                                                <div class="lds-dual-ring"></div>
+                                            </div>
+                                        </div>
+                                    </figure>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Heavy Metals Detection -->
+                        <h2 class="mt-4 mb-3">Heavy Metals Detection Cumulative</h2>
+                        <!-- Line Chart -->
+                        <div class="row" id="summaryRow">
+                            <div class="col-12 adjust">
+                                <div class="chartContainer bg-white p-3 card" style="border-radius: 20px; margin-bottom: 1rem;">
+                                    <h6 class="p-2" style="text-align: left;">Month-Wise Heavy Metals Detection</h6>
+                                    <figure class="highcharts-figure">
+                                        <div id="heavyMetalsData">
+                                            <div class='pt-4 text-center'>
+                                                <p>Loading...</p>
+                                                <div class="lds-dual-ring"></div>
+                                            </div>
+                                        </div>
+                                    </figure>
+                                </div>
+                            </div>
+                        </div>
+                    </div> <!-- End Water Quality Tab -->
+                </div> <!-- End Tab Content -->
+            </div>
+        </div>
+    </main>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+    <script src="https://code.highcharts.com/modules/data.js"></script>
+    <script src="https://code.highcharts.com/modules/drilldown.js"></script>
+    <script src="https://code.highcharts.com/modules/annotations.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+
+    <script type="text/javascript">
+        // Mock Data
+        const mockData = {
+            lineChartData: [
+                { date: '2024-01', count: 45 },
+                { date: '2024-02', count: 52 },
+                { date: '2024-03', count: 48 },
+                { date: '2024-04', count: 61 },
+                { date: '2024-05', count: 58 },
+                { date: '2024-06', count: 67 },
+                { date: '2024-07', count: 72 },
+                { date: '2024-08', count: 68 },
+                { date: '2024-09', count: 75 },
+                { date: '2024-10', count: 82 },
+                { date: '2024-11', count: 79 },
+                { date: '2024-12', count: 87 }
+            ],
+            stackBarData: [
+                { region: 'North District', water: 233, air: 180, soil: 147 },
+                { region: 'South District', water: 198, air: 165, soil: 132 },
+                { region: 'East District', water: 215, air: 172, soil: 128 }
+            ],
+            pieData: [
+                { name: 'North District', y: 560 },
+                { name: 'South District', y: 495 },
+                { name: 'East District', y: 515 }
+            ],
+            barData: [
+                { site: 'Industrial Zone A', count: 105 },
+                { site: 'Residential Area B', count: 89 },
+                { site: 'Commercial District C', count: 128 },
+                { site: 'Parks & Recreation', count: 74 },
+                { site: 'Waterfront Zone', count: 129 },
+                { site: 'Agricultural Area', count: 92 },
+                { site: 'Transport Hub', count: 86 },
+                { site: 'Educational District', count: 78 }
+            ]
+        };
+
+        // Global Variables
+        var startGlobal = '';
+        var endGlobal = '';
+        var regions = ['North District', 'South District', 'East District'];
+        var years = ['2023', '2024'];
+
+        // Date Range Picker
+        function cb(start, end) {
+            $('#reportrange span').html(start.format('MMMM D, YYYY') + ' - ' + end.format('MMMM D, YYYY'));
+            startGlobal = start;
+            endGlobal = end;
+        }
+
+        $('#reportrange').daterangepicker({
+            startDate: moment().subtract(29, 'days'),
+            endDate: moment(),
+            ranges: {
+                'Today': [moment(), moment()],
+                'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+                'Last 7 Days': [moment().subtract(6, 'days'), moment()],
+                'Last 30 Days': [moment().subtract(29, 'days'), moment()],
+                'This Month': [moment().startOf('month'), moment().endOf('month')],
+                'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+            }
+        }, cb);
+
+        cb(moment().subtract(29, 'days'), moment());
+
+        // Filter Functions
+        function reset() {
+            $("input[type='checkbox']").prop('checked', false);
+            $('#btn1, #btn2, #btn3, #btnY2, #btnY3').prop('checked', true);
+            initializeCharts();
+        }
+
+        function getFilteredData() {
+            var selectedRegions = $("input[name='town[]']:checked").map(function() {
+                return $(this).val();
+            }).get();
+
+            var selectedYears = $("input[name='year[]']:checked").map(function() {
+                return $(this).val();
+            }).get();
+
+            if (selectedRegions.length === 0 && selectedYears.length === 0) {
+                alert('Please select at least one filter to apply.');
+                return;
+            }
+
+            // Apply filters and update charts
+            initializeCharts();
+        }
+
+        // Chart Initialization Functions
+        function initializeCharts() {
+            createLineChart();
+            createStackBarChart();
+            createSitesPieChart();
+            createDistributionBarChart();
+            createEnvironmentalAnalysis();
+        }
+
+        function createLineChart() {
+            const data = mockData.lineChartData.map(item => [
+                new Date(item.date + '-01').getTime(),
+                item.count
+            ]);
+
+            Highcharts.chart('container', {
+                chart: {
+                    style: { fontFamily: 'Poppins' }
+                },
+                title: {
+                    text: 'Environmental Samples Collected by Month',
+                    align: 'left'
+                },
+                subtitle: {
+                    text: 'Monthly Collection Trends',
+                    align: 'left'
+                },
+                xAxis: {
+                    type: 'datetime',
+                    title: { text: 'Month' }
+                },
+                yAxis: {
+                    title: { text: 'Sample Count' }
+                },
+                legend: { enabled: false },
+                plotOptions: {
+                    line: {
+                        dataLabels: {
+                            enabled: true,
+                            borderRadius: 5,
+                            backgroundColor: 'rgba(220, 224, 221, 0.7)'
+                        },
+                        lineWidth: 3,
+                        color: '#2c7be5'
+                    }
+                },
+                series: [{
+                    name: 'Sample Count',
+                    data: data
+                }]
+            });
+        }
+
+        function createStackBarChart() {
+            const categories = mockData.stackBarData.map(item => item.region);
+            
+            Highcharts.chart('stackbarChart-CultureTac', {
+                chart: {
+                    type: 'bar',
+                    style: { fontFamily: 'Poppins' }
+                },
+                title: {
+                    text: 'Environmental Sample Collection by Region',
+                    align: 'left'
+                },
+                xAxis: {
+                    categories: categories
+                },
+                yAxis: {
+                    min: 0,
+                    title: { text: 'Sample Count' }
+                },
+                legend: {
+                    reversed: false
+                },
+                plotOptions: {
+                    series: {
+                        stacking: 'normal',
+                        dataLabels: { enabled: true }
+                    }
+                },
+                series: [{
+                    name: 'Water Samples',
+                    data: mockData.stackBarData.map(item => item.water),
+                    color: '#2c7be5'
+                }, {
+                    name: 'Air Quality',
+                    data: mockData.stackBarData.map(item => item.air),
+                    color: '#39bbf7'
+                }, {
+                    name: 'Soil Samples',
+                    data: mockData.stackBarData.map(item => item.soil),
+                    color: '#00d27a'
+                }]
+            });
+        }
+
+        function createSitesPieChart() {
+            Highcharts.chart('sitesDoughnut', {
+                chart: {
+                    type: 'pie',
+                    height: 400,
+                    style: { fontFamily: 'Poppins' }
+                },
+                title: {
+                    text: 'Samples by Region',
+                    align: 'left'
+                },
+                subtitle: {
+                    text: 'Distribution Overview',
+                    align: 'left'
+                },
+                plotOptions: {
+                    pie: {
+                        innerSize: '60%',
+                        dataLabels: {
+                            enabled: true,
+                            format: '<b>{point.name}</b>: {point.percentage:.1f}%'
+                        },
+                        colors: ['#2c7be5', '#39bbf7', '#00d27a']
+                    }
+                },
+                series: [{
+                    name: 'Samples',
+                    data: mockData.pieData
+                }]
+            });
+        }
+
+        function createDistributionBarChart() {
+            const sortedData = [...mockData.barData].sort((a, b) => b.count - a.count);
+            
+            Highcharts.chart('ucBarChartDistribution', {
+                chart: {
+                    type: 'column',
+                    height: 500,
+                    style: { fontFamily: 'Poppins' }
+                },
+                title: {
+                    text: 'Sample Collection by Monitoring Sites'
+                },
+                xAxis: {
+                    categories: sortedData.map(item => item.site),
+                    labels: {
+                        rotation: -45,
+                        style: { fontSize: '12px' }
+                    }
+                },
+                yAxis: {
+                    title: { text: 'Sample Count' }
+                },
+                plotOptions: {
+                    column: {
+                        dataLabels: { enabled: true },
+                        color: '#2c7be5'
+                    }
+                },
+                series: [{
+                    name: 'Samples',
+                    data: sortedData.map(item => item.count),
+                    showInLegend: false
+                }]
+            });
+        }
+
+        function createEnvironmentalAnalysis() {
+            // Create category buttons
+            const categories = ['Water Quality', 'Air Quality', 'Soil Analysis', 'Noise Levels'];
+            const buttonContainer = document.getElementById('buttonContainer');
+            buttonContainer.innerHTML = '';
+            
+            categories.forEach((category, index) => {
+                const button = document.createElement('button');
+                button.className = `btn btn-outline-primary m-1 ${index === 0 ? 'active' : ''}`;
+                button.textContent = category;
+                button.onclick = () => displayCategoryData(category);
+                buttonContainer.appendChild(button);
+            });
+
+            // Display initial category
+            displayCategoryData('Water Quality');
+        }
+
+        function displayCategoryData(category) {
+            // Update active button
+            document.querySelectorAll('#buttonContainer button').forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.textContent === category) btn.classList.add('active');
+            });
+
+            // Mock data for different categories
+            const categoryData = {
+                'Water Quality': [
+                    { name: 'pH Levels', value: 145, trend: generateTrendData('pH Levels') },
+                    { name: 'Dissolved Oxygen', value: 132, trend: generateTrendData('Dissolved Oxygen') },
+                    { name: 'Turbidity', value: 98, trend: generateTrendData('Turbidity') },
+                    { name: 'Chemical Pollutants', value: 87, trend: generateTrendData('Chemical Pollutants') }
+                ],
+                'Air Quality': [
+                    { name: 'PM2.5', value: 167, trend: generateTrendData('PM2.5') },
+                    { name: 'PM10', value: 143, trend: generateTrendData('PM10') },
+                    { name: 'CO2 Levels', value: 121, trend: generateTrendData('CO2 Levels') },
+                    { name: 'Ozone', value: 95, trend: generateTrendData('Ozone') }
+                ],
+                'Soil Analysis': [
+                    { name: 'Heavy Metals', value: 89, trend: generateTrendData('Heavy Metals') },
+                    { name: 'Nutrient Levels', value: 76, trend: generateTrendData('Nutrient Levels') },
+                    { name: 'pH Balance', value: 112, trend: generateTrendData('pH Balance') },
+                    { name: 'Organic Matter', value: 95, trend: generateTrendData('Organic Matter') }
+                ],
+                'Noise Levels': [
+                    { name: 'Traffic Noise', value: 201, trend: generateTrendData('Traffic Noise') },
+                    { name: 'Industrial Noise', value: 156, trend: generateTrendData('Industrial Noise') },
+                    { name: 'Construction', value: 89, trend: generateTrendData('Construction') },
+                    { name: 'Ambient', value: 134, trend: generateTrendData('Ambient') }
+                ]
+            };
+
+            const data = categoryData[category] || [];
+            
+            Highcharts.chart('trackers', {
+                chart: {
+                    type: 'column',
+                    style: { fontFamily: 'Poppins' }
+                },
+                title: {
+                    text: `${category} Monitoring Results`
+                },
+                subtitle: {
+                    text: 'Click on bars to view trends (multiple selections allowed)'
+                },
+                xAxis: {
+                    categories: data.map(item => item.name)
+                },
+                yAxis: {
+                    title: { text: 'Test Count' }
+                },
+                plotOptions: {
+                    column: {
+                        cursor: 'pointer',
+                        dataLabels: { enabled: true },
+                        point: {
+                            events: {
+                                click: function() {
+                                    const pointName = this.category;
+                                    const seriesName = this.series.name;
+                                    const trendData = data.find(item => item.name === pointName)?.trend;
+                                    
+                                    if (trendData) {
+                                        addTrendLine(pointName, trendData, category);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                series: [{
+                    name: 'Tests Performed',
+                    data: data.map((item, index) => ({
+                        name: item.name,
+                        y: item.value,
+                        color: ['#2c7be5', '#39bbf7', '#00d27a', '#f5803e'][index % 4]
+                    })),
+                    showInLegend: false
+                }]
+            });
+        }
+
+        // Generate mock trend data for each parameter
+        function generateTrendData(parameterName) {
+            const trendData = [];
+            const baseValue = Math.floor(Math.random() * 50) + 20;
+            
+            for (let i = 0; i < 12; i++) {
+                const date = new Date(2024, i, 1);
+                const variation = (Math.random() - 0.5) * 20;
+                const seasonalFactor = Math.sin(i * Math.PI / 6) * 10;
+                const value = Math.max(0, Math.floor(baseValue + variation + seasonalFactor));
+                
+                trendData.push({
+                    x: date.getTime(),
+                    y: value
+                });
+            }
+            
+            return trendData;
+        }
+
+        // Store active trend lines
+        let activeTrendLines = [];
+
+        function addTrendLine(parameterName, trendData, category) {
+            // Check if this trend line already exists
+            const existingIndex = activeTrendLines.findIndex(line => line.name === parameterName);
+            
+            if (existingIndex !== -1) {
+                // Remove existing trend line
+                activeTrendLines.splice(existingIndex, 1);
+            } else {
+                // Add new trend line
+                const color = ['#2c7be5', '#39bbf7', '#00d27a', '#f5803e', '#e63757', '#f5803e'][activeTrendLines.length % 6];
+                activeTrendLines.push({
+                    name: parameterName,
+                    data: trendData,
+                    color: color,
+                    category: category
+                });
+            }
+            
+            updateTrendChart();
+        }
+
+        function updateTrendChart() {
+            if (activeTrendLines.length === 0) {
+                $('#positivityTrend').empty();
+                $('#trendAnalysisSection').hide();
+                return;
+            }
+
+            $('#trendAnalysisSection').show();
+
+            Highcharts.chart('positivityTrend', {
+                chart: {
+                    type: 'line',
+                    style: { fontFamily: 'Poppins' }
+                },
+                title: {
+                    text: 'Environmental Parameter Trends'
+                },
+                subtitle: {
+                    text: 'Monthly trend analysis for selected parameters'
+                },
+                xAxis: {
+                    type: 'datetime',
+                    title: { text: 'Month' }
+                },
+                yAxis: {
+                    title: { text: 'Values' }
+                },
+                tooltip: {
+                    shared: true,
+                    crosshairs: true,
+                    formatter: function() {
+                        let tooltip = '<b>' + Highcharts.dateFormat('%B %Y', this.x) + '</b><br/>';
+                        this.points.forEach(function(point) {
+                            tooltip += '<span style="color:' + point.series.color + '">' + point.series.name + '</span>: <b>' + point.y + '</b><br/>';
+                        });
+                        return tooltip;
+                    }
+                },
+                plotOptions: {
+                    line: {
+                        marker: {
+                            enabled: true,
+                            radius: 4
+                        },
+                        lineWidth: 3
+                    }
+                },
+                legend: {
+                    enabled: true,
+                    align: 'center',
+                    verticalAlign: 'bottom'
+                },
+                series: activeTrendLines.map(line => ({
+                    name: `${line.name} (${line.category})`,
+                    data: line.data,
+                    color: line.color
+                }))
+            });
+        }
+
+        // Clear all trend lines
+        function clearAllTrends() {
+            activeTrendLines = [];
+            updateTrendChart();
+        }
+
+        // Initialize everything when page loads
+        $(document).ready(function() {
+            initializeCharts();
+        });
+
+        // Reset button for trends
+        $('#resetButton').on('click', function() {
+            clearAllTrends();
+        });
+
+        // Water Quality Dashboard JavaScript (Clinical Style)
+        let waterChartsGroupDataFirst = null;
+        let waterChartsGroupDataSecond = null;
+        let waterChartsGroupDataThird = null;
+
+        // Mock data for Water Quality Dashboard
+        const waterQualityMockData = {
+            waterQuality_TestingBar: [
+                {facilityName: "Lab Station A", tested: 156, pending: 24, processed: 132},
+                {facilityName: "Lab Station B", tested: 189, pending: 18, processed: 171},
+                {facilityName: "Field Lab C", tested: 98, pending: 12, processed: 86}
+            ],
+            waterQuality_TodayWeek: [
+                {facilityName: "Lab Station A", today: 3, thisWeek: 18},
+                {facilityName: "Lab Station B", today: 2, thisWeek: 21},
+                {facilityName: "Field Lab C", today: 3, thisWeek: 13}
+            ],
+            waterQuality_FacilityCount: [
+                {facilityName: "Municipal Water Plant A", total: 309},
+                {facilityName: "Treatment Facility B", total: 229},
+                {facilityName: "Distribution Point C", total: 433},
+                {facilityName: "Reservoir Station D", total: 263},
+                {facilityName: "Field Testing Unit E", total: 170}
+            ],
+            waterQuality_TestStatus: [
+                {facilityName: "Lab Station A", screened: 156, eligible: 145, tested: 132},
+                {facilityName: "Lab Station B", screened: 189, eligible: 178, tested: 171},
+                {facilityName: "Field Lab C", screened: 98, eligible: 92, tested: 86}
+            ],
+            waterQuality_TestType: [
+                {facilityName: "Lab Station A", pH: 45, bacterial: 52, chemical: 35},
+                {facilityName: "Lab Station B", pH: 58, bacterial: 63, chemical: 50},
+                {facilityName: "Field Lab C", pH: 32, bacterial: 29, chemical: 25}
+            ],
+            waterQuality_SampleStatus: [
+                {facilityName: "Lab Station A", received: 156, processed: 132, pending: 24},
+                {facilityName: "Lab Station B", received: 189, processed: 171, pending: 18},
+                {facilityName: "Field Lab C", received: 98, processed: 86, pending: 12}
+            ],
+            waterQuality_TestingDates: [
+                {date: "2024-01-01", facilityName: "Lab Station A", count: 12},
+                {date: "2024-01-01", facilityName: "Lab Station B", count: 15},
+                {date: "2024-01-02", facilityName: "Lab Station A", count: 8},
+                {date: "2024-01-02", facilityName: "Lab Station B", count: 11},
+                {date: "2024-01-03", facilityName: "Lab Station A", count: 14},
+                {date: "2024-01-03", facilityName: "Lab Station B", count: 18}
+            ],
+            waterQuality_CumulativeByDistrict: [
+                {date: "2024-01-01", district: "North District", count: 25},
+                {date: "2024-01-02", district: "North District", count: 48},
+                {date: "2024-01-03", district: "North District", count: 73},
+                {date: "2024-01-01", district: "South District", count: 18},
+                {date: "2024-01-02", district: "South District", count: 39},
+                {date: "2024-01-03", district: "South District", count: 62}
+            ]
+        };
+
+        // Initialize Water Quality Dashboard
+        function initializeWaterQualityDashboard() {
+            waterChartsGroupDataFirst = waterQualityMockData;
+            
+            // Water Quality Testing Status
+            waterQualityTestingStatus();
+            // Water Quality Tests by Type
+            waterQualityTestsByType();
+            // Water Quality by Test Category
+            waterQualityByTestCategory();
+            // Water Sample Status
+            waterSampleStatus();
+            // pH Analysis
+            waterPHAnalysis();
+            // Chemical Tests
+            waterChemicalTests();
+            // Bacterial Tests
+            waterBacterialTests();
+            // Monthly Testing Trend
+            waterMonthlyTestingTrend();
+            // Lab Testing Trend
+            waterLabTestingTrend();
+            // Cumulative Trend
+            waterCumulativeTrend();
+            // Contamination Trend
+            waterContaminationTrend();
+            // pH Monitoring
+            waterPHMonitoring();
+            // Chemical Analysis
+            waterChemicalAnalysis();
+            // Heavy Metals
+            waterHeavyMetals();
+            // Sample Results
+            waterSampleResults();
+            // Quality Results
+            waterQualityResults();
+            // Tests by District
+            waterTestsByDistrict();
+            // Tests by Zone
+            waterTestsByZone();
+            // Tests by Source
+            waterTestsBySource();
+            // Tests by Category
+            waterTestsByCategory();
+            // Water Test Trackers (Interactive)
+            waterTestTrackers();
+        }
+
+        function waterQualityTestingStatus() {
+            const testingStatusData = waterChartsGroupDataFirst.waterQuality_TestStatus;
+            let categories = [];
+            testingStatusData.map(item => {
+                !categories.includes(item.facilityName) ? categories.push(item.facilityName) : null;
+            });
+
+            const statusGroups = ["Screened", "Eligible", "Tested"];
+            let series = [];
+            statusGroups.forEach(statusGroup => {
+                let data = [];
+                categories.forEach(category => {
+                    const item = testingStatusData.find(d => d.facilityName === category);
+                    if (statusGroup === "Screened") data.push(item ? item.screened : 0);
+                    else if (statusGroup === "Eligible") data.push(item ? item.eligible : 0);
+                    else if (statusGroup === "Tested") data.push(item ? item.tested : 0);
+                });
+                
+                series.push({
+                    name: statusGroup,
+                    data: data,
+                    color: statusGroup === "Screened" ? "#2E86AB" : statusGroup === "Eligible" ? "#F18F01" : "#C73E1D"
+                });
+            });
+
+            Highcharts.chart('waterTestingStatusBar', {
+                chart: {
+                    type: 'column',
+                    backgroundColor: 'transparent',
+                    style: { fontFamily: 'Poppins' }
+                },
+                // title: {
+                //     text: 'Testing Status by Facility'
+                // },
+                xAxis: {
+                    categories: categories,
+                    crosshair: true
+                },
+                yAxis: {
+                    min: 0,
+                    title: {
+                        text: 'Number of Tests'
+                    }
+                },
+                tooltip: {
+                    headerFormat: '<span style="font-size:10px">{point.key}</span><table>',
+                    pointFormat: '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
+                        '<td style="padding:0"><b>{point.y}</b></td></tr>',
+                    footerFormat: '</table>',
+                    shared: true,
+                    useHTML: true
+                },
+                plotOptions: {
+                    column: {
+                        pointPadding: 0.2,
+                        borderWidth: 0
+                    }
+                },
+                series: series,
+                credits: { enabled: false }
+            });
+        }
+
+        function waterQualityTestsByType() {
+            const testTypeData = waterChartsGroupDataFirst.waterQuality_TestType;
+            let categories = [];
+            testTypeData.map(item => {
+                !categories.includes(item.facilityName) ? categories.push(item.facilityName) : null;
+            });
+
+            const testGroups = ["pH", "Bacterial", "Chemical"];
+            let series = [];
+            testGroups.forEach(testGroup => {
+                let data = [];
+                categories.forEach(category => {
+                    const item = testTypeData.find(d => d.facilityName === category);
+                    if (testGroup === "pH") data.push(item ? item.pH : 0);
+                    else if (testGroup === "Bacterial") data.push(item ? item.bacterial : 0);
+                    else if (testGroup === "Chemical") data.push(item ? item.chemical : 0);
+                });
+                
+                series.push({
+                    name: testGroup + " Tests",
+                    data: data,
+                    color: testGroup === "pH" ? "#2E86AB" : testGroup === "Bacterial" ? "#F18F01" : "#C73E1D"
+                });
+            });
+
+            Highcharts.chart('waterQualityBar', {
+                chart: {
+                    type: 'bar',
+                    backgroundColor: 'transparent',
+                    style: { fontFamily: 'Poppins' }
+                },
+                title: {
+                    text: ''
+                },
+                xAxis: {
+                    categories: categories
+                },
+                yAxis: {
+                    min: 0,
+                    title: {
+                        text: 'Number of Tests'
+                    }
+                },
+                legend: {
+                    reversed: true
+                },
+                plotOptions: {
+                    series: {
+                        stacking: 'normal'
+                    }
+                },
+                series: series,
+                credits: { enabled: false }
+            });
+        }
+
+        function waterQualityByTestCategory() {
+            const testCategoryData = waterChartsGroupDataFirst.waterQuality_TestType;
+            let categories = [];
+            testCategoryData.map(item => {
+                !categories.includes(item.facilityName) ? categories.push(item.facilityName) : null;
+            });
+
+            const categoryGroups = ["pH", "Bacterial"];
+            let series = [];
+            categoryGroups.forEach(categoryGroup => {
+                let data = [];
+                categories.forEach(category => {
+                    const item = testCategoryData.find(d => d.facilityName === category);
+                    if (categoryGroup === "pH") data.push(item ? item.pH : 0);
+                    else if (categoryGroup === "Bacterial") data.push(item ? item.bacterial : 0);
+                });
+                
+                series.push({
+                    name: categoryGroup + " Tests",
+                    data: data,
+                    color: categoryGroup === "pH" ? "#2E86AB" : "#F18F01"
+                });
+            });
+
+            Highcharts.chart('waterTestTypeBar', {
+                chart: {
+                    type: 'column',
+                    backgroundColor: 'transparent',
+                    style: { fontFamily: 'Poppins' }
+                },
+                title: {
+                    text: ''
+                },
+                xAxis: {
+                    categories: categories
+                },
+                yAxis: {
+                    min: 0,
+                    title: {
+                        text: 'Number of Tests'
+                    }
+                },
+                plotOptions: {
+                    column: {
+                        pointPadding: 0.2,
+                        borderWidth: 0
+                    }
+                },
+                series: series,
+                credits: { enabled: false }
+            });
+        }
+
+        function waterSampleStatus() {
+            const sampleStatusData = waterChartsGroupDataFirst.waterQuality_SampleStatus;
+            let categories = [];
+            sampleStatusData.map(item => {
+                !categories.includes(item.facilityName) ? categories.push(item.facilityName) : null;
+            });
+
+            const sampleGroups = ["Received", "Processed", "Pending"];
+            let series = [];
+            sampleGroups.forEach(sampleGroup => {
+                let data = [];
+                categories.forEach(category => {
+                    const item = sampleStatusData.find(d => d.facilityName === category);
+                    if (sampleGroup === "Received") data.push(item ? item.received : 0);
+                    else if (sampleGroup === "Processed") data.push(item ? item.processed : 0);
+                    else if (sampleGroup === "Pending") data.push(item ? item.pending : 0);
+                });
+                
+                series.push({
+                    name: sampleGroup,
+                    data: data,
+                    color: sampleGroup === "Received" ? "#2E86AB" : sampleGroup === "Processed" ? "#6A994E" : "#F18F01"
+                });
+            });
+
+            Highcharts.chart('waterSampleBar', {
+                chart: {
+                    type: 'column',
+                    backgroundColor: 'transparent',
+                    style: { fontFamily: 'Poppins' }
+                },
+                title: {
+                    text: ''
+                },
+                xAxis: {
+                    categories: categories
+                },
+                yAxis: {
+                    min: 0,
+                    title: {
+                        text: 'Number of Samples'
+                    }
+                },
+                plotOptions: {
+                    column: {
+                        pointPadding: 0.2,
+                        borderWidth: 0
+                    }
+                },
+                series: series,
+                credits: { enabled: false }
+            });
+        }
+
+        // Additional chart functions following the same pattern...
+        function waterPHAnalysis() {
+            Highcharts.chart('waterPHAnalysisBar', {
+                chart: { type: 'bar', backgroundColor: 'transparent', style: { fontFamily: 'Poppins' }},
+                title: { text: 'pH Analysis Results' },
+                xAxis: { categories: ['Acidic (pH < 6.5)', 'Normal (6.5-8.0)', 'Alkaline (pH > 8.0)'] },
+                yAxis: { min: 0, title: { text: 'Number of Tests' }},
+                series: [{ name: 'pH Tests', data: [45, 289, 23], color: '#2E86AB' }],
+                credits: { enabled: false }
+            });
+        }
+
+        function waterChemicalTests() {
+            Highcharts.chart('waterChemicalTestsBar', {
+                chart: { type: 'column', backgroundColor: 'transparent', style: { fontFamily: 'Poppins' }},
+                title: { text: 'Chemical Tests by Region' },
+                xAxis: { categories: ['North', 'South', 'East', 'West'] },
+                yAxis: { min: 0, title: { text: 'Number of Tests' }},
+                series: [{ name: 'Chemical Tests', data: [156, 189, 134, 98], color: '#C73E1D' }],
+                credits: { enabled: false }
+            });
+        }
+
+        function waterBacterialTests() {
+            Highcharts.chart('waterBacterialTestsBar', {
+                chart: { type: 'column', backgroundColor: 'transparent', style: { fontFamily: 'Poppins' }},
+                title: { text: 'Bacterial Tests' },
+                xAxis: { categories: ['E. coli', 'Coliform', 'Salmonella', 'Other'] },
+                yAxis: { min: 0, title: { text: 'Number of Tests' }},
+                series: [{ name: 'Bacterial Tests', data: [89, 145, 67, 43], color: '#F18F01' }],
+                credits: { enabled: false }
+            });
+        }
+
+        function waterMonthlyTestingTrend() {
+            const trendData = [
+                { date: '2024-01', count: 156 },
+                { date: '2024-02', count: 189 },
+                { date: '2024-03', count: 167 },
+                { date: '2024-04', count: 203 },
+                { date: '2024-05', count: 178 },
+                { date: '2024-06', count: 234 },
+                { date: '2024-07', count: 198 }
+            ];
+
+            const data = trendData.map(item => [
+                new Date(item.date + '-01').getTime(),
+                item.count
+            ]);
+
+            Highcharts.chart('waterQualityTrendContainer', {
+                chart: { style: { fontFamily: 'Poppins' }, backgroundColor: 'transparent' },
+                title: { text: 'Monthly Water Quality Testing Trend' },
+                xAxis: { type: 'datetime', title: { text: 'Month' }},
+                yAxis: { title: { text: 'Number of Tests' }},
+                series: [{ name: 'Water Tests', data: data, color: '#2E86AB' }],
+                credits: { enabled: false }
+            });
+        }
+
+        function waterLabTestingTrend() {
+            const labData = [
+                { date: '2024-01', count: 89 },
+                { date: '2024-02', count: 103 },
+                { date: '2024-03', count: 95 },
+                { date: '2024-04', count: 118 },
+                { date: '2024-05', count: 134 },
+                { date: '2024-06', count: 156 }
+            ];
+
+            const data = labData.map(item => [
+                new Date(item.date + '-01').getTime(),
+                item.count
+            ]);
+
+            Highcharts.chart('waterLabTestTrend', {
+                chart: { style: { fontFamily: 'Poppins' }, backgroundColor: 'transparent' },
+                title: { text: 'Lab Testing Trend' },
+                xAxis: { type: 'datetime', title: { text: 'Month' }},
+                yAxis: { title: { text: 'Number of Tests' }},
+                series: [{ name: 'Lab Tests', data: data, color: '#F18F01' }],
+                credits: { enabled: false }
+            });
+        }
+
+        function waterCumulativeTrend() {
+            const cumulativeData = [
+                { date: '2024-01', count: 156 },
+                { date: '2024-02', count: 345 },
+                { date: '2024-03', count: 512 },
+                { date: '2024-04', count: 715 },
+                { date: '2024-05', count: 893 },
+                { date: '2024-06', count: 1127 }
+            ];
+
+            const data = cumulativeData.map(item => [
+                new Date(item.date + '-01').getTime(),
+                item.count
+            ]);
+
+            Highcharts.chart('waterCumulativeTrendByDistrict', {
+                chart: { style: { fontFamily: 'Poppins' }, backgroundColor: 'transparent' },
+                title: { text: 'Cumulative Testing Trend' },
+                xAxis: { type: 'datetime', title: { text: 'Month' }},
+                yAxis: { title: { text: 'Cumulative Tests' }},
+                series: [{ name: 'Cumulative Tests', data: data, color: '#6A994E' }],
+                credits: { enabled: false }
+            });
+        }
+
+        function waterContaminationTrend() {
+            const contaminationData = [
+                { date: '2024-01', count: 23 },
+                { date: '2024-02', count: 18 },
+                { date: '2024-03', count: 31 },
+                { date: '2024-04', count: 25 },
+                { date: '2024-05', count: 19 },
+                { date: '2024-06', count: 28 }
+            ];
+
+            const data = contaminationData.map(item => [
+                new Date(item.date + '-01').getTime(),
+                item.count
+            ]);
+
+            Highcharts.chart('contaminationTrendData', {
+                chart: { style: { fontFamily: 'Poppins' }, backgroundColor: 'transparent' },
+                title: { text: 'Contamination Detection Trend' },
+                xAxis: { type: 'datetime', title: { text: 'Month' }},
+                yAxis: { title: { text: 'Contamination Cases' }},
+                series: [{ name: 'Contamination', data: data, color: '#C73E1D' }],
+                credits: { enabled: false }
+            });
+        }
+
+        function waterPHMonitoring() {
+            const phData = [
+                { date: '2024-01', ph: 7.2 },
+                { date: '2024-02', ph: 7.1 },
+                { date: '2024-03', ph: 7.4 },
+                { date: '2024-04', ph: 7.0 },
+                { date: '2024-05', ph: 7.3 },
+                { date: '2024-06', ph: 7.2 }
+            ];
+
+            const data = phData.map(item => [
+                new Date(item.date + '-01').getTime(),
+                item.ph
+            ]);
+
+            Highcharts.chart('phMonitoringData', {
+                chart: { style: { fontFamily: 'Poppins' }, backgroundColor: 'transparent' },
+                title: { text: 'pH Level Monitoring' },
+                xAxis: { type: 'datetime', title: { text: 'Month' }},
+                yAxis: { title: { text: 'pH Level' }, min: 6.5, max: 8.0 },
+                series: [{ name: 'pH Level', data: data, color: '#2E86AB' }],
+                credits: { enabled: false }
+            });
+        }
+
+        function waterChemicalAnalysis() {
+            const chemicalData = [
+                { date: '2024-01', count: 67 },
+                { date: '2024-02', count: 78 },
+                { date: '2024-03', count: 89 },
+                { date: '2024-04', count: 95 },
+                { date: '2024-05', count: 103 },
+                { date: '2024-06', count: 112 }
+            ];
+
+            const data = chemicalData.map(item => [
+                new Date(item.date + '-01').getTime(),
+                item.count
+            ]);
+
+            Highcharts.chart('chemicalAnalysisContainer', {
+                chart: { style: { fontFamily: 'Poppins' }, backgroundColor: 'transparent' },
+                title: { text: 'Chemical Analysis Trend' },
+                xAxis: { type: 'datetime', title: { text: 'Month' }},
+                yAxis: { title: { text: 'Chemical Tests' }},
+                series: [{ name: 'Chemical Analysis', data: data, color: '#C73E1D' }],
+                credits: { enabled: false }
+            });
+        }
+
+        function waterHeavyMetals() {
+            const heavyMetalsData = [
+                { date: '2024-01', count: 12 },
+                { date: '2024-02', count: 8 },
+                { date: '2024-03', count: 15 },
+                { date: '2024-04', count: 11 },
+                { date: '2024-05', count: 6 },
+                { date: '2024-06', count: 9 }
+            ];
+
+            const data = heavyMetalsData.map(item => [
+                new Date(item.date + '-01').getTime(),
+                item.count
+            ]);
+
+            Highcharts.chart('heavyMetalsData', {
+                chart: { style: { fontFamily: 'Poppins' }, backgroundColor: 'transparent' },
+                title: { text: 'Heavy Metals Detection' },
+                xAxis: { type: 'datetime', title: { text: 'Month' }},
+                yAxis: { title: { text: 'Heavy Metals Detected' }},
+                series: [{ name: 'Heavy Metals', data: data, color: '#A23B72' }],
+                credits: { enabled: false }
+            });
+        }
+
+        function waterSampleResults() {
+            Highcharts.chart('waterSampleTrend', {
+                chart: { type: 'line', backgroundColor: 'transparent', style: { fontFamily: 'Poppins' }},
+                title: { text: 'Sample Results Trend' },
+                xAxis: { categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'] },
+                yAxis: { title: { text: 'Sample Count' }},
+                series: [{ name: 'Samples', data: [156, 189, 167, 203, 178, 234], color: '#2E86AB' }],
+                credits: { enabled: false }
+            });
+        }
+
+        function waterQualityResults() {
+            Highcharts.chart('waterQualityResults', {
+                chart: { type: 'pie', backgroundColor: 'transparent', style: { fontFamily: 'Poppins' }},
+                title: { text: 'Quality Test Results' },
+                series: [{
+                    name: 'Results',
+                    data: [
+                        { name: 'Passed', y: 1598, color: '#6A994E' },
+                        { name: 'Failed', y: 249, color: '#C73E1D' }
+                    ]
+                }],
+                credits: { enabled: false }
+            });
+        }
+
+        function waterTestsByDistrict() {
+            Highcharts.chart('waterTestsByDistrict', {
+                chart: { type: 'column', backgroundColor: 'transparent', style: { fontFamily: 'Poppins' }},
+                title: { text: '' },
+                xAxis: { categories: ['North', 'South', 'East', 'West'] },
+                yAxis: { title: { text: 'Number of Tests' }},
+                series: [{ name: 'Tests', data: [456, 389, 567, 234], color: '#2E86AB' }],
+                credits: { enabled: false }
+            });
+        }
+
+        function waterTestsByZone() {
+            Highcharts.chart('waterTestsByZone', {
+                chart: { type: 'column', backgroundColor: 'transparent', style: { fontFamily: 'Poppins' }},
+                title: { text: '' },
+                xAxis: { categories: ['Urban', 'Suburban', 'Rural'] },
+                yAxis: { title: { text: 'Number of Tests' }},
+                series: [{ name: 'Tests', data: [789, 567, 345], color: '#F18F01' }],
+                credits: { enabled: false }
+            });
+        }
+
+        function waterTestsBySource() {
+            Highcharts.chart('waterTestsBySource', {
+                chart: { type: 'pie', backgroundColor: 'transparent', style: { fontFamily: 'Poppins' }},
+                title: { text: '' },
+                series: [{
+                    name: 'Source',
+                    data: [
+                        { name: 'Municipal', y: 567, color: '#2E86AB' },
+                        { name: 'Well Water', y: 345, color: '#F18F01' },
+                        { name: 'Surface Water', y: 234, color: '#C73E1D' },
+                        { name: 'Other', y: 123, color: '#A23B72' }
+                    ]
+                }],
+                credits: { enabled: false }
+            });
+        }
+
+        // function waterTestsByCategory() {
+        //     Highcharts.chart('waterTestsByCategory', {
+        //         chart: { type: 'doughnut', backgroundColor: 'transparent', style: { fontFamily: 'Poppins' }},
+        //         title: { text: 'Tests by Category' },
+        //         series: [{
+        //             name: 'Category',
+        //             data: [
+        //                 { name: 'pH Tests', y: 534, color: '#2E86AB' },
+        //                 { name: 'Bacterial', y: 447, color: '#F18F01' },
+        //                 { name: 'Chemical', y: 423, color: '#C73E1D' },
+        //                 { name: 'Physical', y: 356, color: '#A23B72' }
+        //             ]
+        //         }],
+        //         credits: { enabled: false }
+        //     });
+        // }
+
+        function waterTestTrackers() {
+            const waterTestData = {
+                'pH Balance': { current: 534, target: 600, color: '#2E86AB' },
+                'Bacteria Screening': { current: 447, target: 500, color: '#F18F01' },
+                'Chemical Analysis': { current: 423, target: 480, color: '#C73E1D' },
+                'Physical Quality': { current: 389, target: 420, color: '#A23B72' },
+                'Heavy Metals': { current: 298, target: 350, color: '#6A994E' },
+                'Organic Compounds': { current: 256, target: 300, color: '#F77F00' }
+            };
+
+            let waterButtonsHTML = '';
+            let waterChartsData = [];
+
+            Object.keys(waterTestData).forEach((testType, index) => {
+                const data = waterTestData[testType];
+                const percentage = Math.round((data.current / data.target) * 100);
+                
+                waterButtonsHTML += `
+                    <button class="btn btn-outline-primary m-1 water-test-button" 
+                            data-test="${testType}" 
+                            style="border-radius: 15px; border-width: 2px;">
+                        ${testType} (${percentage}%)
+                    </button>
+                `;
+
+                waterChartsData.push({
+                    testType: testType,
+                    current: data.current,
+                    target: data.target,
+                    percentage: percentage,
+                    color: data.color
+                });
+            });
+
+            document.getElementById('waterButtonContainer').innerHTML = waterButtonsHTML;
+
+            // Create initial progress charts
+            waterChartsData.forEach((chartData, index) => {
+                const chartId = `waterProgressChart${index}`;
+                const chartContainer = document.createElement('div');
+                chartContainer.id = chartId;
+                chartContainer.style.width = '150px';
+                chartContainer.style.height = '150px';
+                chartContainer.style.display = 'inline-block';
+                chartContainer.style.margin = '10px';
+                document.getElementById('waterTestTrackers').appendChild(chartContainer);
+
+                Highcharts.chart(chartId, {
+                    chart: {
+                        type: 'pie',
+                        backgroundColor: 'transparent',
+                        width: 150,
+                        height: 150,
+                        margin: [0, 0, 0, 0],
+                        spacing: [0, 0, 0, 0],
+                        style: { fontFamily: 'Poppins' }
+                    },
+                    title: {
+                        text: chartData.testType,
+                        style: {
+                            fontSize: '12px',
+                            fontWeight: 'bold'
+                        },
+                        y: 20
+                    },
+                    tooltip: {
+                        enabled: false
+                    },
+                    plotOptions: {
+                        pie: {
+                            dataLabels: {
+                                enabled: true,
+                                distance: -30,
+                                style: {
+                                    fontSize: '14px',
+                                    fontWeight: 'bold',
+                                    color: 'white',
+                                    textOutline: '1px black'
+                                },
+                                formatter: function() {
+                                    return this.point.name === 'Current' ? chartData.percentage + '%' : '';
+                                }
+                            },
+                            startAngle: -90,
+                            endAngle: 90,
+                            center: ['50%', '75%'],
+                            size: '120%',
+                            innerSize: '60%'
+                        }
+                    },
+                    series: [{
+                        name: 'Progress',
+                        data: [{
+                            name: 'Current',
+                            y: chartData.current,
+                            color: chartData.color
+                        }, {
+                            name: 'Remaining',
+                            y: chartData.target - chartData.current,
+                            color: '#E0E0E0'
+                        }]
+                    }],
+                    credits: {
+                        enabled: false
+                    }
+                });
+            });
+        }
+
+        // Initialize Water Quality Dashboard when tab is shown
+        $('a[data-bs-toggle="tab"]').on('shown.bs.tab', function (e) {
+            if (e.target.getAttribute('href') === '#clinical') {
+                setTimeout(() => {
+                    initializeWaterQualityDashboard();
+                }, 100);
+            }
+        });
+    </script>
+</body>
+</html>
