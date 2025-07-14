@@ -52,6 +52,6 @@ This demonstration version uses synthetic data to protect the confidentiality of
 
 ---
 
-**Developed by**: Asad Jamal  
+**Developed by**: AsadSheikhj  
 **Year**: 2023  
 **Purpose**: Environmental Data Monitoring & Visualization
